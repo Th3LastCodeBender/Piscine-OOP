@@ -5,7 +5,7 @@ FLAGS = -Wall -Wextra -Werror -g
 DEBUG ?= 0
 CPPFLAGS = -std=c++98 -DDEBUG=$(DEBUG)
 
-SRCS = main.cpp Account/Account.cpp Bank/Bank.cpp
+SRCS = main.cpp Account/Account.cpp Bank/Bank.cpp Utils/BankUtils.cpp
 
 RUN_ARGS := $(filter-out run val all clean fclean gdb re debug,$(MAKECMDGOALS))
 

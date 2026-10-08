@@ -4,30 +4,36 @@
 #include "../Includes/libs.h"
 #include "../Account/Account.hpp"
 
+struct s_debtInfo
+{
+	std::string date;
+	int		 	interest;
+	long 		amount;
+};
+
 class Bank
 {
 	private:
 
-		std::vector<Account *> Clients;
+		std::vector<Account>			_Clients;
+		std::map<Account, s_debtInfo>	_InDebt;
+		std::string						_Id;
 
 	public:
 
 		Bank();
 		Bank(const Bank& other);
 		~Bank();
+
 		Bank& operator=(const Bank& other);
 
-		class BankException : public std::exception
+		void	addClient(const Account &Client, long reqMoney);
+
+		class BankException : public std::runtime_error
 		{
-			private:
-				std::string _msg;
 			public:
-				BankException(std::string msg) : _msg(msg) {};
-				virtual const char *what() const throw() {return (_msg.c_str());}
-				~BankException() throw() {};
+				BankException(const std::string &msg) : std::runtime_error(msg) {}
 		};
 };
-
-std::ostream& operator<<(std::ostream& os, const Account& acc);
 
 #endif

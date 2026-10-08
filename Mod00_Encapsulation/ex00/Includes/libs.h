@@ -1,16 +1,25 @@
 #ifndef LIBS_H
 # define LIBS_H
 
+// IWYU pragma: begin_exports
 #include <iostream>
 #include <vector>
 #include <cstring>
 #include <string>
 #include <climits>
+#include <sstream>
+#include <stdexcept>
+# include <fstream>
+# include <iomanip>
+# include <map>
 
-#if defined(DEBUG) && DEBUG
-  #define DBG_MSG(msg) (std::cout << (msg) << std::endl)
-#else
-  #define DBG_MSG(msg) ((void)0)
-#endif
+// ---------UTILS---------
+
+#include "../Utils/StringUtils.hpp"
+#include "../Includes/macro.h"
+
+std::string generateRandomId();
+
+// IWYU pragma: end_exports
 
 #endif

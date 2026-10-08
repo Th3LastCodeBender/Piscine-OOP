@@ -7,30 +7,30 @@ class Account
 {
 	private:
 
-		int		_id;
-		long	_value;
+		std::string	bankId;
+		std::string	_id;
+		long		_value;
 
 	public:
 
-		Account(int id, long value);
+		Account(long givenValue, std::string givenBankId);
 		Account(const Account& other);
 		~Account();
+		
 		Account& operator=(const Account& other);
+		friend std::ostream& operator<<(std::ostream& os, const Account& acc);
 
-		long	getValue() const;
-		int		getId() const;
+		long		getValue(std::string bankId) const;
+		std::string	getId(std::string bankId) const;
+		void		setValue(long value, std::string bankId);
+		void		setBankId(std::string oldBankId, std::string newBankid);
 
-		class AccountException : public std::exception
+		class AccountException : public std::runtime_error
 		{
-			private:
-				std::string _msg;
 			public:
-				AccountException(std::string msg) : _msg(msg) {};
-				virtual const char *what() const throw() {return (_msg.c_str());}
-				~AccountException() throw() {};
+				AccountException(const std::string &msg) : std::runtime_error(msg) {}
 		};
 };
 
-std::ostream& operator<<(std::ostream& os, const Account& acc);
 
 #endif
