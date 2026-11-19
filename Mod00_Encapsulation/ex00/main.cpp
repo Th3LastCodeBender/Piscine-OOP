@@ -4,7 +4,7 @@ int main(void)
 {
 	try
 	{
-		Bank	bank(99900, 500);
+		Bank	bank(99900, 5);
 		int		a = bank.createAccount(10000);
 		int		b = bank.createAccount(10000);
 
@@ -18,7 +18,7 @@ int main(void)
 
 		try
 		{
-			bank.giveLoan(a, 999999999);
+			bank.giveLoan(a, 10000);
 		}
 		catch (const std::exception &e)
 		{
@@ -33,7 +33,7 @@ int main(void)
 		{
 			std::cerr << "Error: " << e.what() << std::endl;
 		}
-
+		
 		bank.repayLoan(b, 21000);
 		bank.deleteAccount(b);
 		std::cout << bank << std::endl;

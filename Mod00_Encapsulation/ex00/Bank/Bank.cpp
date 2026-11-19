@@ -1,4 +1,6 @@
 #include "Bank.hpp"
+#include <exception>
+#include <sys/types.h>
 
 Bank::Bank(long liquidity, int interest)
 {
@@ -54,6 +56,8 @@ int	Bank::createAccount(long initialDeposit)
 
 void	Bank::deleteAccount(int id)
 {
+	try
+	{
 	Account& Client = this->findClient(id);
 
 	if (Client._debtInfo.amount > 0)
@@ -61,13 +65,18 @@ void	Bank::deleteAccount(int id)
 	if (Client._balance < DELETE_FEE)
 		throw BankException("The client: " + toString(id) + " you are trying to delete has insufficent liquidity to pay the elimination fee!\n");
 	if (Client._balance > 0)
-		throw BankException("The client: " + toString(id) + " you are trying to delete has positive deposits, withdraw before deleting!\nIf you were to delete the account with a positive deposit the money will be given to the bank\n");
+		throw BankException("The client: " + toString(id) + " you are trying to delete has positive deposits, withdraw before deleting!\n");
 	
 	this->_liquidity += Client._balance;
 	Client._balance = 0;
 
 	if (this->_Clients.erase(id) == 0)
 		throw BankException("The client: " + toString(id) + " you are trying to delete does not exist!\n");
+	}
+	catch(std::exception &e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+	}
 }
 
 void	Bank::deposit(int id, long amount)
@@ -77,7 +86,10 @@ void	Bank::deposit(int id, long amount)
 
 	if (Client._balance + amount < rateFee)
 		throw BankException("The Client: " + toString(id) + " balance is too low to pay the deposit fee, gimme more moneyH!\n");
+	this->_liquidity += rateFee;
 	Client._balance += (amount - rateFee);
+
+	std::cout << "Account " << id << " deposited a total of " << formatMoney(amount) << " minus the deposit fee that makes " << formatMoney(amount - rateFee) << std::endl;
 }	
 
 void	Bank::withdraw(int id, long amount)
@@ -88,7 +100,12 @@ void	Bank::withdraw(int id, long amount)
 	if (Client._balance < withdrawFee)
 		throw BankException("The Client:" + toString(id) + " tried to withdraw but does not have enough balance to pay the withdrawal fee\noups\n");
 	else
+	{
+		this->_liquidity += withdrawFee;
 	 	Client._balance -= (amount + withdrawFee);
+	}
+
+	std::cout << "Account " << id << " withdrew a total of " << formatMoney(amount) << " plus the withdrawal fee that makes " << formatMoney(amount + withdrawFee) << std::endl;
 	if (Client._debtInfo.amount > 0)
 		std::cout << "We see your debt balance is positive... Better give us back the money, never know when the boss wakes up and feels like increasing rates!\n:]" << std::endl;
 }
@@ -104,6 +121,8 @@ void	Bank::giveLoan(int id, long amount)
 	client._debtInfo.date = getTimeOfDay();
 	client._balance += amount;
 	this->_liquidity -= amount;
+
+	std::cout << "Account " << id << " received a loan of " << formatMoney(amount) << " plus the loan interest that makes a debt of " << formatMoney(client._debtInfo.amount) << std::endl;
 }
 
 void	Bank::repayLoan(int id, long amount)
@@ -111,7 +130,7 @@ void	Bank::repayLoan(int id, long amount)
 	Account &Client = this->findClient(id);
 	long	debtFee = applyRate(Client._debtInfo.amount, this->_interest);
 
-	if (Client._debtInfo.amount > 0)
+	if (Client._debtInfo.amount < 0)
 		throw BankException("The Client: " + toString(id) + " has no debt balance");
 	if (Client._balance > 0 || Client._balance < debtFee)
 		Client._balance -= debtFee;
@@ -135,6 +154,6 @@ std::ostream& operator<<(std::ostream& os, const Bank& bank)
 	os << "Bank informations:" << std::endl;
 	os << "Liquidity: " << formatMoney(bank._liquidity) << std::endl;
 	for (std::map<int, Bank::Account>::const_iterator it = bank._Clients.begin(); it != bank._Clients.end(); ++it)
-		os << it->second << std::endl;
+		os << "Account " << it->second << std::endl;
 	return (os);
 }
