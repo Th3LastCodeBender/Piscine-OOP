@@ -56,8 +56,6 @@ int	Bank::createAccount(long initialDeposit)
 
 void	Bank::deleteAccount(int id)
 {
-	try
-	{
 	Account& Client = this->findClient(id);
 
 	if (Client._debtInfo.amount > 0)
@@ -66,17 +64,12 @@ void	Bank::deleteAccount(int id)
 		throw BankException("The client: " + toString(id) + " you are trying to delete has insufficent liquidity to pay the elimination fee!\n");
 	if (Client._balance > 0)
 		throw BankException("The client: " + toString(id) + " you are trying to delete has positive deposits, withdraw before deleting!\n");
-	
+
 	this->_liquidity += Client._balance;
 	Client._balance = 0;
 
 	if (this->_Clients.erase(id) == 0)
 		throw BankException("The client: " + toString(id) + " you are trying to delete does not exist!\n");
-	}
-	catch(std::exception &e)
-	{
-		std::cerr << "Error: " << e.what() << std::endl;
-	}
 }
 
 void	Bank::deposit(int id, long amount)
@@ -90,7 +83,7 @@ void	Bank::deposit(int id, long amount)
 	Client._balance += (amount - rateFee);
 
 	std::cout << "Account " << id << " deposited a total of " << formatMoney(amount) << " minus the deposit fee that makes " << formatMoney(amount - rateFee) << std::endl;
-}	
+}
 
 void	Bank::withdraw(int id, long amount)
 {
@@ -102,7 +95,7 @@ void	Bank::withdraw(int id, long amount)
 	else
 	{
 		this->_liquidity += withdrawFee;
-	 	Client._balance -= (amount + withdrawFee);
+		Client._balance -= (amount + withdrawFee);
 	}
 
 	std::cout << "Account " << id << " withdrew a total of " << formatMoney(amount) << " plus the withdrawal fee that makes " << formatMoney(amount + withdrawFee) << std::endl;
@@ -135,8 +128,10 @@ void	Bank::repayLoan(int id, long amount)
 	if (Client._balance > 0 || Client._balance < debtFee)
 		Client._balance -= debtFee;
 	else
-	 	amount-= debtFee;
+		amount-= debtFee;
 	Client._debtInfo.amount -= amount;
+	Client._balance -= amount;
+	this->_liquidity += amount;
 }
 
 const long	&Bank::getLiquidity() const

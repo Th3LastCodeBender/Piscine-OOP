@@ -34,8 +34,23 @@ int main(void)
 			std::cerr << "Error: " << e.what() << std::endl;
 		}
 		
-		bank.repayLoan(b, 21000);
-		bank.deleteAccount(b);
+		try
+		{
+			bank.repayLoan(b, 21000);
+		}
+		catch (const std::exception &e)
+		{
+			std::cerr << "Error: " << e.what() << std::endl;
+		}
+
+		try
+		{
+			bank.deleteAccount(b);
+		}
+		catch (const std::exception &e)
+		{
+			std::cerr << "Error: " << e.what() << std::endl;
+		}
 		std::cout << bank << std::endl;
 
 		std::cout << bank[b] << std::endl;
