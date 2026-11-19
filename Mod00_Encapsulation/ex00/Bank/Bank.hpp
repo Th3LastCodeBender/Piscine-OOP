@@ -1,7 +1,7 @@
 #ifndef BANK_HPP
 # define BANK_HPP
 
-#include "../Includes/libs.h"
+#include "../Includes/libs.hpp"
 
 struct s_debtInfo
 {

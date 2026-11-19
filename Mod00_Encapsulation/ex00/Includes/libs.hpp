@@ -19,7 +19,7 @@
 // ---------UTILS---------
 
 #include "../Utils/StringUtils.hpp"
-#include "../Includes/macro.h"
+#include "../Includes/macro.hpp"
 
 std::string generateRandomId();
 std::string getTimeOfDay();
@@ -29,13 +29,11 @@ long        applyRate(long cents, int rateBp);
 
 enum e_amountCheck
 {
-	CHK_POSITIVE	= 1 << 0,	// amount > 0
-	CHK_NOT_NEG		= 1 << 1,	// amount >= 0
-	CHK_MAX			= 1 << 2	// amount <= limit
+	CHK_POSITIVE	= 1 << 0,
+	CHK_NOT_NEG		= 1 << 1,
+	CHK_MAX			= 1 << 2
 };
 
 void        checkAmount(long amount, int flags, long limit = 0, const std::string &label = "Amount");
-
-// IWYU pragma: end_exports
 
 #endif

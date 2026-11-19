@@ -62,6 +62,10 @@ void	Bank::deleteAccount(int id)
 		throw BankException("The client: " + toString(id) + " you are trying to delete has insufficent liquidity to pay the elimination fee!\n");
 	if (Client._balance > 0)
 		throw BankException("The client: " + toString(id) + " you are trying to delete has positive deposits, withdraw before deleting!\nIf you were to delete the account with a positive deposit the money will be given to the bank\n");
+	
+	this->_liquidity += Client._balance;
+	Client._balance = 0;
+
 	if (this->_Clients.erase(id) == 0)
 		throw BankException("The client: " + toString(id) + " you are trying to delete does not exist!\n");
 }
@@ -71,7 +75,7 @@ void	Bank::deposit(int id, long amount)
 	Account &Client = this->findClient(id);
 	long	rateFee = applyRate(amount, this->_interest);
 
-	if (Client._balance < rateFee)
+	if (Client._balance + amount < rateFee)
 		throw BankException("The Client: " + toString(id) + " balance is too low to pay the deposit fee, gimme more moneyH!\n");
 	Client._balance += (amount - rateFee);
 }	

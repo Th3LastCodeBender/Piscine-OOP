@@ -1,4 +1,6 @@
-#include "../Includes/libs.h"
+#include "../Includes/libs.hpp"
+#include <climits>
+#include <stdexcept>
 
 //Itoa per prendere un valore in palanche e convertirlo in stringa
 std::string formatMoney(long cents)
@@ -57,18 +59,18 @@ long parseMoney(const std::string &str)
 }
 
 //Calcolo di interesse passato in percentuale convertito in rateBP, come fanno le banche vere MUHUHAHAHAHA
-long applyRate(long cents, int rate)
+long applyRate(long rawAmount, int rate)
 {
-	long	product;
-	long	rateBp;
+	long product;
+	
+	if (rawAmount < 0)
+		throw std::out_of_range("Raw Amount passed in applyRate is invalid: Negative amounts are not accepted");
+	else if (rawAmount > MAX_START)
+		throw std::out_of_range("Raw Amount passed in applyRate is invalid: Greater than allowed max value");
 
-	if (rate != 0 && (cents > LONG_MAX / rate || cents < LONG_MIN / rate))
-		throw std::out_of_range("Rate calculation overflow");
-	rateBp = rate * 100;
-	product = cents * rateBp;
-	if (product >= 0)
-		return ((product + 5000) / 10000);
-	return ((product - 5000) / 10000);
+	product = (rawAmount * rate) / 100;
+
+	return (product);
 }
 
 //Controlla amount in base ai flag passati, lancia eccexion al primo controllo fallito
