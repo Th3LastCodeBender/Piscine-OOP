@@ -83,6 +83,7 @@ void	Bank::deposit(int id, long amount)
 
 	this->_liquidity += rateFee;
 	Client._balance += (amount - rateFee);
+	updateAverage(Client);
 
 	std::cout << "Account " << id << " deposited a total of " << formatMoney(amount) << " minus the deposit fee that makes " << formatMoney(amount - rateFee) << std::endl;
 }
@@ -108,6 +109,7 @@ void	Bank::withdraw(int id, long amount)
 			Client._debtInfo.amount += (Client._balance * -1);
 			Client._balance = 0;
 		}
+		updateAverage(Client);
 	}
 
 	std::cout << "Account " << id << " withdrew a total of " << formatMoney(amount) << " plus the withdrawal fee that makes " << formatMoney(amount + withdrawFee) << std::endl;
@@ -129,6 +131,7 @@ void	Bank::giveLoan(int id, long amount)
 	client._debtInfo.date = getTimeOfDay();
 	client._balance += amount;
 	this->_liquidity -= amount;
+	updateAverage(client);
 
 	std::cout << "Account " << id << " received a loan of " << formatMoney(amount) << " plus the loan interest that makes a debt of " << formatMoney(client._debtInfo.amount) << std::endl;
 }
@@ -150,6 +153,7 @@ void	Bank::repayLoan(int id, long amount)
 	Client._debtInfo.amount -= amount;
 	Client._balance -= amount + debtFee;
 	this->_liquidity += amount;
+	updateAverage(Client);
 }
 
 const long	&Bank::getLiquidity() const

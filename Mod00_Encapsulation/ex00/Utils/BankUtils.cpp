@@ -13,11 +13,11 @@ std::string generateRandomId()
 	return (oss.str());
 }
 
-long	Bank::updateAverage(Bank::Account &acc, long amount)
+long	Bank::updateAverage(Bank::Account &acc)
 {
 	long	total;
 
-	total = acc._averageBalance * acc._operations + amount;
+	total = acc._averageBalance * acc._operations + acc._balance;
 	acc._operations++;
 	acc._averageBalance = total / acc._operations;
 	return (acc._averageBalance);

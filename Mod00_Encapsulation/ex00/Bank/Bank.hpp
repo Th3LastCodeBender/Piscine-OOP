@@ -56,7 +56,7 @@ class Bank
 		Bank& operator=(const Bank& other);
 
 		Account	&findClient(int id);
-		long	updateAverage(Account &acc, long amount);
+		long	updateAverage(Account &acc);
 
 
 	public:
