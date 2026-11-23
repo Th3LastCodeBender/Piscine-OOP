@@ -141,7 +141,7 @@ void	Bank::repayLoan(int id, long amount)
 		throw BankException("Client: " + toString(id) + " is trying to pay a loan but has not enough funds to pay it");
 
 	Client._debtInfo.amount -= amount;
-	Client._balance -= amount;
+	Client._balance -= amount + debtFee;
 	this->_liquidity += amount;
 }
 
