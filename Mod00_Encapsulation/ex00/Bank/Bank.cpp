@@ -1,5 +1,6 @@
 #include "Bank.hpp"
 #include <exception>
+#include <linux/limits.h>
 #include <sys/types.h>
 
 Bank::Bank(long liquidity, int interest)
@@ -72,9 +73,11 @@ void	Bank::deposit(int id, long amount)
 	Account &Client = this->findClient(id);
 	long	rateFee = applyRate(amount, this->_interest);
 
-	checkAmount(amount, CHK_POSITIVE | CHK_MAX);
+	checkAmount(amount, CHK_NOT_NEG | CHK_MAX, 0, "Asked deposit amount not valid");
 	if (Client._balance + amount < rateFee)
 		throw BankException("The Client: " + toString(id) + " balance is too low to pay the deposit fee, gimme more moneyH!\n");
+	if (Client._balance + amount > MAX_START)
+		throw BankException("Im afraid that would make your balance exceed the maximum allowed value...\n");
 	this->_liquidity += rateFee;
 	Client._balance += (amount - rateFee);
 

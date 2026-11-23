@@ -17,7 +17,6 @@ class Bank
 		class Account
 		{
 			friend class Bank;
-			friend long	updateAverage(Account &acc, long amount);
 
 			private:
 
@@ -45,7 +44,7 @@ class Bank
 			public:
 				AccountException(const std::string &msg) : std::runtime_error(msg) {}
 		};
-
+	
 	private:
 
 		std::map<int, Account>	_Clients;
@@ -57,6 +56,8 @@ class Bank
 		Bank& operator=(const Bank& other);
 
 		Account	&findClient(int id);
+		long	updateAverage(Account &acc, long amount);
+
 
 	public:
 
