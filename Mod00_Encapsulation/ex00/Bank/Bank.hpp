@@ -17,11 +17,14 @@ class Bank
 		class Account
 		{
 			friend class Bank;
+			friend long	updateAverage(Account &acc, long amount);
 
 			private:
 
 				int			_id;
 				long		_balance;
+				long		_averageBalance;
+				long		_operations;
 				s_debtInfo	_debtInfo;
 
 				Account(int id, long value);
@@ -81,5 +84,6 @@ class Bank
 };
 
 std::ostream& operator<<(std::ostream& os, const Bank::Account& acc);
+long	updateAverage(Bank::Account &acc, long amount);
 
 #endif

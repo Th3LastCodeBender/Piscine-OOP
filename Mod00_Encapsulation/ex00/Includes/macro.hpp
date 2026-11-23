@@ -5,6 +5,7 @@
 #define MAX_LOAN 1000000
 #define BANK_FEE 500
 #define DELETE_FEE 5000
+#define POOR_FEE 5000
 
 #if defined(DEBUG) && DEBUG
   #define DBG_MSG(msg) (std::cout << (msg) << std::endl)

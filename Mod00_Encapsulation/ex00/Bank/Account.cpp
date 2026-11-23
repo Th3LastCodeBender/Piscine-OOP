@@ -7,6 +7,8 @@ Bank::Account::Account(int id, long value)
 	this->_balance = value;
 	this->_debtInfo.amount = 0;
 	this->_debtInfo.interest = 0;
+	this->_averageBalance = value;
+	this->_operations = 1;
 }
 
 Bank::Account::Account(const Account &obj)
@@ -15,6 +17,8 @@ Bank::Account::Account(const Account &obj)
 	this->_id = obj._id;
 	this->_balance = obj._balance;
 	this->_debtInfo = obj._debtInfo;
+	this->_averageBalance = obj._averageBalance;
+	this->_operations = obj._operations;
 }
 
 Bank::Account::~Account()

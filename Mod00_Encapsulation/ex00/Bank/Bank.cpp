@@ -62,8 +62,6 @@ void	Bank::deleteAccount(int id)
 		throw BankException("The client: " + toString(id) + " you are trying to delete is still in debt\n Settle the debt before erasing the account!\n");
 	if (Client._balance < DELETE_FEE)
 		throw BankException("The client: " + toString(id) + " you are trying to delete has insufficent liquidity to pay the elimination fee!\n");
-	if (Client._balance > 0)
-		throw BankException("The client: " + toString(id) + " you are trying to delete has positive deposits, withdraw before deleting!\n");
 
 	this->_liquidity += Client._balance;
 	Client._balance = 0;
@@ -92,10 +90,20 @@ void	Bank::withdraw(int id, long amount)
 
 	if (Client._balance < withdrawFee)
 		throw BankException("The Client:" + toString(id) + " tried to withdraw but does not have enough balance to pay the withdrawal fee\noups\n");
+	else if (amount + withdrawFee > Client._balance)
+		throw BankException("Cannot withdraw more than what you have, and never forget da fees!\n");
 	else
 	{
 		this->_liquidity += withdrawFee;
-		Client._balance -= (amount + withdrawFee);
+		if (Client._averageBalance < 20000)
+			Client._balance -= (amount + withdrawFee + POOR_FEE);
+		else
+			Client._balance -= (amount + withdrawFee);
+		if (Client._balance < 0)
+		{
+			Client._debtInfo.amount += (Client._balance * -1);
+			Client._balance = 0;
+		}
 	}
 
 	std::cout << "Account " << id << " withdrew a total of " << formatMoney(amount) << " plus the withdrawal fee that makes " << formatMoney(amount + withdrawFee) << std::endl;
@@ -109,6 +117,9 @@ void	Bank::giveLoan(int id, long amount)
 
 	checkAmount(amount, CHK_POSITIVE | CHK_MAX, MAX_LOAN, "Loan amount");
 	checkAmount(amount, CHK_MAX, this->_liquidity, "Bank liquidity check: loan");
+	if (client._debtInfo.amount > 0)
+		throw BankException("Please settle already existing debts before asking for new ones");
+
 	client._debtInfo.amount = amount + applyRate(amount, this->_interest);
 	client._debtInfo.interest = this->_interest;
 	client._debtInfo.date = getTimeOfDay();
@@ -121,14 +132,17 @@ void	Bank::giveLoan(int id, long amount)
 void	Bank::repayLoan(int id, long amount)
 {
 	Account &Client = this->findClient(id);
-	long	debtFee = applyRate(Client._debtInfo.amount, this->_interest);
+	long	debtFee = applyRate(Client._debtInfo.amount, Client._debtInfo.interest);
 
-	if (Client._debtInfo.amount < 0)
-		throw BankException("The Client: " + toString(id) + " has no debt balance");
-	if (Client._balance > 0 || Client._balance < debtFee)
-		Client._balance -= debtFee;
-	else
-		amount-= debtFee;
+	if (Client._debtInfo.amount <= 0)
+		throw BankException("Client: " + toString(id) + " has no debt balance");
+	if (amount <= 0)
+		throw BankException("Negative amounts are to accepted");
+	if (amount > Client._debtInfo.amount)
+		throw BankException("Client: " + toString(id) + " is trying to pay a greater loan than what owes the bank");
+	if (Client._balance < amount + debtFee)
+		throw BankException("Client: " + toString(id) + " is trying to pay a loan but has not enough funds to pay it");
+
 	Client._debtInfo.amount -= amount;
 	Client._balance -= amount;
 	this->_liquidity += amount;

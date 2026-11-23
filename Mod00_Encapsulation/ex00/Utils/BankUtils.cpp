@@ -1,4 +1,4 @@
-#include "../Includes/libs.hpp"
+#include "../Bank/Bank.hpp"
 
 std::string generateRandomId()
 {
@@ -11,4 +11,14 @@ std::string generateRandomId()
 	for (size_t i = 0; i < 16; ++i)
 		oss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(buf[i]);
 	return (oss.str());
+}
+
+long	updateAverage(Bank::Account &acc, long amount)
+{
+	long	total;
+
+	total = acc._averageBalance * acc._operations + amount;
+	acc._operations++;
+	acc._averageBalance = total / acc._operations;
+	return (acc._averageBalance);
 }
