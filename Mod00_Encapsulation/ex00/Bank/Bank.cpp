@@ -65,9 +65,6 @@ void	Bank::deleteAccount(int id)
 
 	this->_liquidity += Client._balance;
 	Client._balance = 0;
-
-	if (this->_Clients.erase(id) == 0)
-		throw BankException("The client: " + toString(id) + " you are trying to delete does not exist!\n");
 }
 
 void	Bank::deposit(int id, long amount)
