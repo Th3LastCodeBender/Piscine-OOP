@@ -72,6 +72,7 @@ void	Bank::deposit(int id, long amount)
 	Account &Client = this->findClient(id);
 	long	rateFee = applyRate(amount, this->_interest);
 
+	checkAmount(amount, CHK_POSITIVE | CHK_MAX);
 	if (Client._balance + amount < rateFee)
 		throw BankException("The Client: " + toString(id) + " balance is too low to pay the deposit fee, gimme more moneyH!\n");
 	this->_liquidity += rateFee;
