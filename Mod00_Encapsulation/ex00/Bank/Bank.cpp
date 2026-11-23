@@ -66,18 +66,21 @@ void	Bank::deleteAccount(int id)
 
 	this->_liquidity += Client._balance;
 	Client._balance = 0;
+	this->_Clients.erase(id);
 }
 
 void	Bank::deposit(int id, long amount)
 {
+	checkAmount(amount, CHK_POSITIVE | CHK_MAX, MAX_START, "Asked deposit amount not valid");
+
 	Account &Client = this->findClient(id);
 	long	rateFee = applyRate(amount, this->_interest);
 
-	checkAmount(amount, CHK_NOT_NEG | CHK_MAX, 0, "Asked deposit amount not valid");
 	if (Client._balance + amount < rateFee)
 		throw BankException("The Client: " + toString(id) + " balance is too low to pay the deposit fee, gimme more moneyH!\n");
 	if (Client._balance + amount > MAX_START)
 		throw BankException("Im afraid that would make your balance exceed the maximum allowed value...\n");
+
 	this->_liquidity += rateFee;
 	Client._balance += (amount - rateFee);
 
