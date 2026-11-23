@@ -92,16 +92,16 @@ void	Bank::withdraw(int id, long amount)
 {
 	Account &Client = this->findClient(id);
 	long 	withdrawFee = applyRate(amount, this->_interest);
-
+	long	poorFee = (Client._averageBalance < 20000) ? POOR_FEE : 0; 
 	if (Client._balance < withdrawFee)
 		throw BankException("The Client:" + toString(id) + " tried to withdraw but does not have enough balance to pay the withdrawal fee\noups\n");
-	else if (amount + withdrawFee > Client._balance)
+	else if (amount + withdrawFee + poorFee > Client._balance)
 		throw BankException("Cannot withdraw more than what you have, and never forget da fees!\n");
 	else
 	{
 		this->_liquidity += withdrawFee;
-		if (Client._averageBalance < 20000)
-			Client._balance -= (amount + withdrawFee + POOR_FEE);
+		if (poorFee > 0)
+			Client._balance -= (amount + withdrawFee + poorFee);
 		else
 			Client._balance -= (amount + withdrawFee);
 		if (Client._balance < 0)
@@ -152,7 +152,7 @@ void	Bank::repayLoan(int id, long amount)
 
 	Client._debtInfo.amount -= amount;
 	Client._balance -= amount + debtFee;
-	this->_liquidity += amount;
+	this->_liquidity += amount + debtFee;
 	updateAverage(Client);
 }
 
